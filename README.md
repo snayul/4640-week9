@@ -18,15 +18,20 @@
 ```
 cd packer
 packer init .
-packer build ansible-web.pkr.hcl
+packer validate .
+packer build .
 ```
 ### 3. Deploy with Terraform
 ```
 cd ../terraform
 terraform init
-terraform apply -auto-approve
+terraform validate
+terraform apply 
 ```
 ### 4. SSH into the EC2 Instance
 
 terraform output public_ip
 ssh -i ~/.ssh/your_key.pem ubuntu@<PUBLIC_IP>
+
+### 5. (optional) Destory infrastructure
+If you are no longer using the infrastructure use ```terraform destroy``` to clean up your environment.
