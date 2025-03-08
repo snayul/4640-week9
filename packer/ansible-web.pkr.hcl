@@ -1,13 +1,12 @@
-variable "ssh_username" {}
 packer {
   required_plugins {
     amazon = {
       source  = "github.com/hashicorp/amazon"
-      version = ">= 1.0.0"
+      version = ">= 1.3.4"
     }
     ansible = {
       source  = "github.com/hashicorp/ansible"
-      version = ">= 1.0.0"
+      version = ">= 1.1.2"
     }
   }
 }
@@ -17,7 +16,7 @@ source "amazon-ebs" "ubuntu" {
   region        = "us-west-2"
   instance_type = "t2.micro"
   ami_name      = "my-ubuntu-ami-{{timestamp}}"
-  ssh_username  = var.ssh_username
+  
 
   source_ami_filter {
     filters = {
@@ -29,15 +28,17 @@ source "amazon-ebs" "ubuntu" {
     most_recent = true
   }
 
-  communicator = "ssh"
+  ssh_username  = var.ssh_username
 }
 
 build {
+  name = "packer-ansible"
   sources = ["source.amazon-ebs.ubuntu"]
 
   provisioner "ansible" {
-    playbook_file    = "./ansible/playbook.yml"
-    extra_arguments  = ["--extra-vars", "ansible_host_key_checking=False"]
-    ansible_env_vars = ["ANSIBLE_HOST_KEY_CHECKING=False"]
+    playbook_file    = "../ansible/playbook.yml"
+    user = var.ssh_username
+    extra_arguments  = ["--extra-vars", "ANSIBLE_HOST_KEY_CHECKING=False"]
+
   }
 }
