@@ -28,6 +28,10 @@ data "aws_ami" "packer_ami" {
     name   = "name"
     values = ["packer-ansible-nginx"]
   }
+	filter {
+  		name   = "state"
+  		values = ["available"]
+	}
 }
 
 # Create a VPC
